@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>RSVP häihin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function toggleFields(index) {
+            var status = document.getElementById('status_' + index).value;
+            var food_allergies = document.getElementById('food_allergies_' + index);
+            var song_request = document.getElementById('song_request_' + index);
+            if (status == 'Kyllä') {
+                food_allergies.style.display = 'inline';
+                song_request.style.display = 'inline';
+            } else {
+                food_allergies.style.display = 'none';
+                song_request.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Etusivu</a></li>
+            <li><a href="{{ url_for('upload_photo') }}">Lähetä valokuvia</a></li>
+            <li><a href="{{ url_for('schedule') }}">Hääpäivän ohjelma</a></li>
+        </ul>
+    </nav>
+    <h1>RSVP häihin</h1>
+    <form method="post" action="{{ url_for('rsvp') }}">
+        {% for i in range(1, 5) %}
+        <fieldset>
+            <legend>Vieraan {{ i }} tiedot</legend>
+            <label for="name_{{ i }}">Nimi:</label>
+            <input type="text" id="name_{{ i }}" name="name_{{ i }}">
+
+            <label for="status_{{ i }}">Osallistutko?</label>
+            <select id="status_{{ i }}" name="status_{{ i }}" onchange="toggleFields({{ i }})">
+                <option value="Kyllä">Kyllä</option>
+                <option value="Ei">Ei</option>
+            </select>
+
+            <label for="food_allergies_{{ i }}" id="food_allergies_label_{{ i }}">Ruoka-allergiat:</label>
+            <input type="text" id="food_allergies_{{ i }}" name="food_allergies_{{ i }}">
+
+            <label for="song_request_{{ i }}" id="song_request_label_{{ i }}">Kappaletoive:</label>
+            <input type="text" id="song_request_{{ i }}" name="song_request_{{ i }}">
+        </fieldset>
+        {% endfor %}
+        <button type="submit">Lähetä</button>
+    </form>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>

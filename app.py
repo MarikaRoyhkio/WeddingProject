@@ -1,20 +1,16 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
-from flask_mail import Mail, Message
+from flask import Flask, request, render_template, redirect, url_for, flash, session
+
 import sqlite3
 import os
-
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] ='testerusermxbw@gmail.com'
-app.config['MAIL_PASSWORD'] = '_kukkAhattUtatI85'
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-mail = Mail(app)
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 def get_db_connection():
     conn = sqlite3.connect('guests.sql')
@@ -22,37 +18,49 @@ def get_db_connection():
     return conn
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def home():
+    return render_template('home.html')
 
-@app.route('/rsvp', methods=['POST'])
+@app.route('/rsvp', methods=['GET', 'POST'])
 def rsvp():
-    name = request.form['name']
-    status = request.form['status']
-    food_allergies = request.form.get('food_allergies', '')
-    song_request = request.form.get('song_request', '')
+    if request.method == 'POST':
+        guests = []
+        for i in range(1, 5):
+            name = request.form.get(f'name_{i}')
+            if name:
+                status = request.form.get(f'status_{i}')
+                food_allergies = request.form.get(f'food_allergies_{i}', '') if status == 'Kyllä' else ''
+                song_request = request.form.get(f'song_request_{i}', '') if status == 'Kyllä' else ''
+                guests.append((name, status, food_allergies, song_request))
 
-    conn = get_db_connection()
-    guest = conn.execute('SELECT * FROM guests WHERE name = ?',
-(name,)).fetchone()
+        conn = get_db_connection()
+        for guest in guests:
+            name, status, food_allergies, song_request = guest
+            guest_record = conn.execute('SELECT * FROM guests WHERE name = ?', (name,)).fetchone()
+            if guest_record is None:
+                flash(f'Nimeä {name} ei löydy vieraslistalta. ')
+                conn.close()
+                return redirect(url_for('rsvp'))
+            conn.execute('UPDATE guests SET rsvp_status = ?, food_allergies = ?, song_request = ? WHERE name = ?', 
+                         (status, food_allergies, song_request, name))
+        conn.commit()
+        conn.close()
 
-    if guest is None:
-        flash('Nimeä ei löytynyt vieraslistalta. Tarkkista oikeinkirjoitus.')
-        return redirect(url_for('index'))
+        flash ('Kiitos vastauksestasi!')
+        return redirect(url_for('rsvp'))
+    
+    return render_template('rsvp.html')
 
-    conn.execute('UPDATE guests SET rsvp_status = ?, food_allergies = ?, song_request = ? WHERE name = ?', (status, food_allergies, song_request, name))
-    conn.commit()
-    conn.close()
-
-    flash ('Kiitos vastauksestasi!')
-    return redirect(url_for('index'))
-
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+    
     conn = get_db_connection()
-    guests = conn.execute('SELECT * FROM guests').fetchall()
+    responded_guests = conn.execute('SELECT * FROM guests WHERE rsvp_status IS NOT NULL').fetchall()
+    non_responded_guests = conn.execute('SELECT * FROM guests WHERE rsvp_status IS NULL').fetchall()
     conn.close()
-    return render_template('admin.html', guests=guests)
+    return render_template('admin.html', responded_guests=responded_guests, non_responded_guests=non_responded_guests)
 
 @app.route('/upload_photo', methods=['GET', 'POST'])
 def upload_photo():
@@ -67,17 +75,55 @@ def upload_photo():
             return redirect(request.url)
         
         if photo:
-            msg = Message('Uusi valokuva häistä',
-                          sender ='testerusermxbw@gmail.com',
-                          recipients=['testerusermxbw@gmail.com'])
-            msg.body = 'Vieraat ovat lähettäneet kuvia häistä.'
-            msg.attach(photo.filename, photo.content_type, photo.read())
-            mail.send(msg)
-
+            filename = os.path.join(app.config['UPLOAD_FOLDER'], photo.filename)
+            photo.save(filename)
             flash('Kiitos kuvien lähettämisestä!')
             return redirect(url_for('upload_photo'))
         
-    return render_template('upload_photo.html)')
+    return render_template('upload_photo.html')
+
+@app.route('/schedule')
+def schedule():
+    return render_template('schedule.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password)).fetchone()
+        conn.close()
+
+        if user:
+            session['logged_in'] = True
+            return redirect(url_for('admin'))
+        else:
+            flash('Virheellinen käyttäjätunnus tai salasana')
+    
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('home'))
+
+@app.route('/create_admin', methods=['GET', 'POST'])
+def create_admin():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        conn = get_db_connection()
+        conn.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+        conn.commit()
+        conn.close()
+        
+        flash('Admin-käyttäjä luotu onnistuneesti')
+        return redirect(url_for('login'))
+    
+    return render_template('create_admin.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

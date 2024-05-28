@@ -2,27 +2,45 @@
 <html>
 
 <head>
-    <title>Admin Panel</title>
+    <title>Admin - Vieraslista</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
-    <h1>RSVP Vastaustilanne</h1>
-    <table>
+    <h1>Admin - Vieraslista</h1>
+    <h2>Vastanneet vieraat</h2>
+    <table border="1">
         <tr>
             <th>Nimi</th>
-            <th>Vastaus</th>
+            <th>Tuleeko</th>
             <th>Ruoka-allergiat</th>
             <th>Kappaletoive</th>
         </tr>
-        {% for guest in guests %}
+        {% for guest in responded_guests %}
         <tr>
-            <td>{{ guest['name'] }}</td>
-            <td>{{ guest['rsvp_status'] }}</td>
-            <td>{{ guest['food_allergies'] }}</td>
-            <td>{{ guest['song_request'] }}</td>
+            <td>{{ guest.name }}</td>
+            <td>{{ guest.rsvp_status }}</td>
+            <td>{{ guest.food_allergies }}</td>
+            <td>{{ guest.song_request }}</td>
         </tr>
         {% endfor %}
     </table>
+
+    <h2>Ei vastanneet vieraat</h2>
+
+    <table border="1">
+        <tr>
+            <th>Nimi</th>
+        </tr>
+        {% for guest in non_responded_guests %}
+        <tr>
+            <td>{{ guest.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+    <a href="{{ url_for('logout') }}">Kirjaudu ulos</a>
 </body>
 
 </html>

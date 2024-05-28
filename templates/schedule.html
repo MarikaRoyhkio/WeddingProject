@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Hääpäivän ohjelma</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Etusivu</a></li>
+            <li><a href="{{ url_for('rsvp') }}">RSVP</a></li>
+            <li><a href="{{ url_for('upload_photo') }}">Lähetä valokuvia</a></li>
+
+        </ul>
+    </nav>
+    <h1>Hääpäivän ohjelma</h1>
+    <p>Tässä on hääpäivämme ohjelma ja aikataulu.</p>
+    <!-- Lisää tähän hääpäivän ohjelma -->
+    <h2>Istumajärjestys</h2>
+    <p>Tarkista istumapaikkasi alta.</p>
+    <!-- Lisää tähän istumajärjestys -->
+</body>
+
+</html>

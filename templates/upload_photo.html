@@ -1,16 +1,24 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title>Lataa valokuva</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Photo</title>
 </head>
 
 <body>
-    <h1>Lataa valokuva häistä</h1>
-    <form method="post" action="{{ url_for('upload_photo') }}" enctype="multipart/form-data">
-        <label for="photo">Valitse kuva:</label>
-        <input type="file" id="photo" name="photo" accept="image/*" required>
-        <button type="submit">Lähetä</button>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('home') }}">Etusivu</a></li>
+            <li><a href="{{ url_for('rsvp') }}">RSVP</a></li>
+            <li><a href="{{ url_for('schedule') }}">Hääpäivän ohjelma</a></li>
+        </ul>
+    </nav>
+    <h1>Valitse lähetettävät kuvat</h1>
+    <form action="{{ url_for('upload_photo') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="photo">
+        <button type="submit">Upload</button>
     </form>
     {% with messages = get_flashed_messages() %}
     {% if messages %}

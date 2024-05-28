@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Hääsivusto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('rsvp') }}">RSVP-lomake</a></li>
+            <li><a href="{{ url_for('upload_photo') }}">Lähetä valokuvia</a></li>
+            <li><a href="{{ url_for('schedule') }}">Hääpäivän ohjelma</a></li>
+        </ul>
+    </nav>
+    <h1>Tervetuloa hääsivuillemme</h1>
+    <p>Täällä löydät kaikki tarpeelliset tiedot hääpäivästämme, mukaan lukien RSVP-lomake, valokuvien
+        lähetysmahdollisuus, hääpäivän ohjelma ja istumajärjestys.</p>
+    <p>Olemme niin iloisia, että voitte juhlia kanssamme!</p>
+
+</body>
+
+</html>

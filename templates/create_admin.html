@@ -2,20 +2,20 @@
 <html>
 
 <head>
-    <title>Kirjaudu sisään</title>
+    <title>Luo Admin-käyttäjä</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 
 <body>
-    <h1>Kirjaudu sisään</h1>
-    <form method="post" action="{{ url_for('login') }}">
+    <h1>Luo Admin-käyttäjä</h1>
+    <form method="post" action="{{ url_for('create_admin') }}">
         <label for="username">Käyttäjätunnus:</label>
         <input type="text" id="username" name="username" required>
 
         <label for="password">Salasana:</label>
         <input type="password" id="password" name="password" required>
 
-        <button type="submit">Kirjaudu sisään</button>
+        <button type="submit">Luo</button>
     </form>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
