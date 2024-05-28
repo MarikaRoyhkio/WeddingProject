@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Admin Panel</title>
+</head>
+
+<body>
+    <h1>RSVP Vastaustilanne</h1>
+    <table>
+        <tr>
+            <th>Nimi</th>
+            <th>Vastaus</th>
+            <th>Ruoka-allergiat</th>
+            <th>Kappaletoive</th>
+        </tr>
+        {% for guest in guests %}
+        <tr>
+            <td>{{ guest['name'] }}</td>
+            <td>{{ guest['rsvp_status'] }}</td>
+            <td>{{ guest['food_allergies'] }}</td>
+            <td>{{ guest['song_request'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+</html>

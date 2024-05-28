@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Lataa valokuva</title>
+</head>
+
+<body>
+    <h1>Lataa valokuva häistä</h1>
+    <form method="post" action="{{ url_for('upload_photo') }}" enctype="multipart/form-data">
+        <label for="photo">Valitse kuva:</label>
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+        <button type="submit">Lähetä</button>
+    </form>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>
