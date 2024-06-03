@@ -13,7 +13,7 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 def get_db_connection():
-    conn = sqlite3.connect('guests.sql')
+    conn = sqlite3.connect('guestlist.sql')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -36,11 +36,14 @@ def rsvp():
         conn = get_db_connection()
         for guest in guests:
             name, status, food_allergies, song_request = guest
+            print(f'Käsitellään vierasta {name}')
             guest_record = conn.execute('SELECT * FROM guests WHERE name = ?', (name,)).fetchone()
             if guest_record is None:
                 flash(f'Nimeä {name} ei löydy vieraslistalta. ')
                 conn.close()
                 return redirect(url_for('rsvp'))
+            
+            print(f'Päivitetään vierasta {name}:n tietoja. Status: {status}, Allergiat: {food_allergies}, Toive: {song_request}')
             conn.execute('UPDATE guests SET rsvp_status = ?, food_allergies = ?, song_request = ? WHERE name = ?', 
                          (status, food_allergies, song_request, name))
         conn.commit()
@@ -60,6 +63,15 @@ def admin():
     responded_guests = conn.execute('SELECT * FROM guests WHERE rsvp_status IS NOT NULL').fetchall()
     non_responded_guests = conn.execute('SELECT * FROM guests WHERE rsvp_status IS NULL').fetchall()
     conn.close()
+
+    print('Responded Guests:')
+    for guest in responded_guests:
+        print(dict(guest))
+        
+    print('Non-responded Guests:')
+    for guest in non_responded_guests:
+        print(dict(guest))
+    
     return render_template('admin.html', responded_guests=responded_guests, non_responded_guests=non_responded_guests)
 
 @app.route('/upload_photo', methods=['GET', 'POST'])

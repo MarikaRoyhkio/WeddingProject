@@ -7,25 +7,36 @@
 </head>
 
 <body>
-    <h1>Kirjaudu sisään</h1>
-    <form method="post" action="{{ url_for('login') }}">
-        <label for="username">Käyttäjätunnus:</label>
-        <input type="text" id="username" name="username" required>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('rsvp') }}">RSVP-lomake</a></li>
+            <li><a href="{{ url_for('upload_photo') }}">Lähetä valokuvia</a></li>
+            <li><a href="{{ url_for('schedule') }}">Hääpäivän ohjelma</a></li>
+        </ul>
 
-        <label for="password">Salasana:</label>
-        <input type="password" id="password" name="password" required>
+        <h1>Kirjaudu sisään</h1>
+        <form method="post" action="{{ url_for('login') }}">
+            <label for="username">Käyttäjätunnus:</label>
+            <input type="text" id="username" name="username" required>
 
-        <button type="submit">Kirjaudu sisään</button>
-    </form>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
+            <label for="password">Salasana:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Kirjaudu sisään</button>
+        </form>
+
+        <ul>
+            <li><a href="{{ url_for('create_admin') }}">Luo käyttäjätunnus</a></li>
+        </ul>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
 </body>
 
 </html>

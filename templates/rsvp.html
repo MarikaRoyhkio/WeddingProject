@@ -38,7 +38,7 @@
             <input type="text" id="name_{{ i }}" name="name_{{ i }}">
 
             <label for="status_{{ i }}">Osallistutko?</label>
-            <select id="status_{{ i }}" name="status_{{ i }}" onchange="toggleFields({{ i }})">
+            <select id="status_{{ i }}" name="status_{{ i }}" onchange="toggleFields({ i })">
                 <option value="Kyllä">Kyllä</option>
                 <option value="Ei">Ei</option>
             </select>

@@ -4,10 +4,12 @@
 <head>
     <title>Admin - Vieraslista</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <a href="{{ url_for('logout') }}">Kirjaudu ulos</a>
 </head>
 
 <body>
     <h1>Admin - Vieraslista</h1>
+
     <h2>Vastanneet vieraat</h2>
     <table border="1">
         <tr>
@@ -40,7 +42,7 @@
     </table>
 
 
-    <a href="{{ url_for('logout') }}">Kirjaudu ulos</a>
+
 </body>
 
 </html>
